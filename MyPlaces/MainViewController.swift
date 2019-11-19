@@ -10,7 +10,7 @@ import UIKit
 
 class MainViewController: UITableViewController {
 
-    let restaurantName = [
+    let restaurantNames = [
         "Burger Heroes", "Kitchen", "Bonsai", "Дастархан",
         "Индокитай", "X.O", "Балкан Гриль", "Sherlock Holmes",
         "Классик", "Love&Life", "Шок", "Бочка"
@@ -32,14 +32,15 @@ class MainViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return restaurantName.count
+        return restaurantNames.count
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        cell.textLabel?.text = restaurantName[indexPath.row]
+        cell.textLabel?.text = restaurantNames[indexPath.row]
+        cell.imageView?.image = UIImage(named: restaurantNames[indexPath.row]) //тк имена файлов соответсвуют названиям заведений то мы можем подставить сюда значения из массива restaurantName
 
         return cell
     }
