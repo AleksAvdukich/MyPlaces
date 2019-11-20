@@ -41,10 +41,18 @@ class MainViewController: UITableViewController {
 
         cell.textLabel?.text = restaurantNames[indexPath.row]
         cell.imageView?.image = UIImage(named: restaurantNames[indexPath.row]) //тк имена файлов соответсвуют названиям заведений то мы можем подставить сюда значения из массива restaurantName
+        cell.imageView?.layer.cornerRadius = cell.frame.size.height / 2 //imageView - квадрат, чтобы из него сделать кргу необходимо задать угол радиуса равный половине квадрата, тк высота изображения равна высоте строки, то для cornerRadius присваиваем половину высоты строки
+        cell.imageView?.clipsToBounds = true //для того чтобы изображение стало круглым необходимо обрезать его по границам imageView
 
         return cell
     }
  
+    // MARK: - Table View delegate
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 85
+    }
+    
     // MARK: - Navigation
     
     /*
