@@ -37,12 +37,12 @@ class MainViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
 
-        cell.textLabel?.text = restaurantNames[indexPath.row]
-        cell.imageView?.image = UIImage(named: restaurantNames[indexPath.row]) //тк имена файлов соответсвуют названиям заведений то мы можем подставить сюда значения из массива restaurantName
-        cell.imageView?.layer.cornerRadius = cell.frame.size.height / 2 //imageView - квадрат, чтобы из него сделать кргу необходимо задать угол радиуса равный половине квадрата, тк высота изображения равна высоте строки, то для cornerRadius присваиваем половину высоты строки
-        cell.imageView?.clipsToBounds = true //для того чтобы изображение стало круглым необходимо обрезать его по границам imageView
+        cell.nameLabel?.text = restaurantNames[indexPath.row]
+        cell.imageOfPlace?.image = UIImage(named: restaurantNames[indexPath.row]) //тк имена файлов соответсвуют названиям заведений то мы можем подставить сюда значения из массива restaurantName
+        cell.imageOfPlace?.layer.cornerRadius = cell.imageOfPlace.frame.size.height / 2 //imageView - квадрат, чтобы из него сделать кргу необходимо задать угол радиуса равный половине квадрата, тк высота изображения равна высоте строки, то для cornerRadius присваиваем половину высоты строки
+        cell.imageOfPlace?.clipsToBounds = true //для того чтобы изображение стало круглым необходимо обрезать его по границам imageView
 
         return cell
     }

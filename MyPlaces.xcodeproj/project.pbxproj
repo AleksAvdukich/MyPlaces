@@ -12,6 +12,7 @@
 		1F447EAB2383589C00946AB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F447EAA2383589C00946AB9 /* Assets.xcassets */; };
 		1F447EAE2383589C00946AB9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F447EAC2383589C00946AB9 /* LaunchScreen.storyboard */; };
 		1F447EB623835FDC00946AB9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F447EB523835FDC00946AB9 /* MainViewController.swift */; };
+		1F6D40122385F1EC004D57AD /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		1F447EAD2383589C00946AB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1F447EAF2383589C00946AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F447EB523835FDC00946AB9 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				1F447EA32383589A00946AB9 /* AppDelegate.swift */,
 				1F447EB523835FDC00946AB9 /* MainViewController.swift */,
+				1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */,
 				1F447EA72383589A00946AB9 /* Main.storyboard */,
 				1F447EAA2383589C00946AB9 /* Assets.xcassets */,
 				1F447EAC2383589C00946AB9 /* LaunchScreen.storyboard */,
@@ -135,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F6D40122385F1EC004D57AD /* CustomTableViewCell.swift in Sources */,
 				1F447EA42383589A00946AB9 /* AppDelegate.swift in Sources */,
 				1F447EB623835FDC00946AB9 /* MainViewController.swift in Sources */,
 			);
