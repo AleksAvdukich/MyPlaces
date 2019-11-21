@@ -10,11 +10,10 @@ import UIKit
 
 class MainViewController: UITableViewController {
 
-    let restaurantNames = [
-        "Burger Heroes", "Kitchen", "Bonsai", "Дастархан",
-        "Индокитай", "X.O", "Балкан Гриль", "Sherlock Holmes",
-        "Классик", "Love&Life", "Шок", "Бочка"
-    ]
+
+    
+    let places = Place.getPlaces()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,15 +31,17 @@ class MainViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return restaurantNames.count
+        return places.count
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
 
-        cell.nameLabel?.text = restaurantNames[indexPath.row]
-        cell.imageOfPlace?.image = UIImage(named: restaurantNames[indexPath.row]) //тк имена файлов соответсвуют названиям заведений то мы можем подставить сюда значения из массива restaurantName
+        cell.nameLabel?.text = places[indexPath.row].name
+        cell.locationLabel.text = places[indexPath.row].location
+        cell.typeLabel.text = places[indexPath.row].type
+        cell.imageOfPlace?.image = UIImage(named: places[indexPath.row].image) //тк имена файлов соответсвуют названиям заведений то мы можем подставить сюда значения из массива restaurantName
         cell.imageOfPlace?.layer.cornerRadius = cell.imageOfPlace.frame.size.height / 2 //imageView - квадрат, чтобы из него сделать кргу необходимо задать угол радиуса равный половине квадрата, тк высота изображения равна высоте строки, то для cornerRadius присваиваем половину высоты строки
         cell.imageOfPlace?.clipsToBounds = true //для того чтобы изображение стало круглым необходимо обрезать его по границам imageView
 
@@ -48,10 +49,7 @@ class MainViewController: UITableViewController {
     }
  
     // MARK: - Table View delegate
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 85
-    }
+
     
     // MARK: - Navigation
     
