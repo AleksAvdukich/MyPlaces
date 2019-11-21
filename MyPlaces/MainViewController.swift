@@ -18,8 +18,6 @@ class MainViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
     }
 
     // MARK: - Table view data source
@@ -60,5 +58,7 @@ class MainViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    @IBAction func cancelAction(_ segue: UIStoryboardSegue) {}
 
 }
