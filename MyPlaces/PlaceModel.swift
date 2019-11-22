@@ -6,14 +6,15 @@
 //  Copyright © 2019 Aleksandr Avdukich. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct Place {
     
     var name: String
-    var location: String
-    var type: String
-    var image: String //image - String тк к изображениями обращаемся по имени файла
+    var location: String?
+    var image: UIImage?
+    var type: String?
+    var restaurantImage: String? //image - String тк к изображениями обращаемся по имени файла
     
     static let restaurantNames = [
         "Burger Heroes", "Kitchen", "Bonsai", "Дастархан",
@@ -28,7 +29,7 @@ struct Place {
         //будем добавлять в массив places объекты с типом Place св-ва которых будут инициализированы значениями из массива restaurantNames
         
         for place in restaurantNames {
-            places.append(Place(name: place, location: "Уфа", type: "Ресторан", image: place))
+            places.append(Place(name: place, location: "Уфа", image: nil, type: "Ресторан", restaurantImage: place))
         }
         
         return places

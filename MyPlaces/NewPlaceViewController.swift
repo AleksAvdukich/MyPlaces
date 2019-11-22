@@ -10,12 +10,23 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
 
-    @IBOutlet weak var imageOfPlace: UIImageView!
+    var newPlace: Place?
+    var imageIsChanged = false
+    
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    @IBOutlet weak var placeImage: UIImageView!
+    @IBOutlet weak var placeName: UITextField!
+    @IBOutlet weak var placeLocation: UITextField!
+    @IBOutlet weak var placeType: UITextField!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
         tableView.tableFooterView = UIView() //убираем разлиновку ячеек в нижней части tableView, там где нет контента
         
+        saveButton.isEnabled = false
+        
+        placeName.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
     }
     
     //MARK: Table View delegate
@@ -57,7 +68,28 @@ class NewPlaceViewController: UITableViewController {
             view.endEditing(true)
         }
     }
-
+    //будем передавать значения заполненных полей в соответствующие свойства нашей модели
+    func saveNewPlace() {
+        
+        var image: UIImage?
+        //если изображение было изменено пользователем
+        if imageIsChanged {
+            image = placeImage.image
+        } else {
+            image = #imageLiteral(resourceName: "imagePlaceholder")
+        }
+        
+        newPlace = Place(name: placeName.text!,
+                         location: placeLocation.text,
+                         image: image,
+                         type: placeType.text,
+                         restaurantImage: nil)
+    }
+    
+    @IBAction func cancelAction(_ sender: Any) {
+        dismiss(animated: true)
+    }
+    
     
 }
 
@@ -69,6 +101,14 @@ extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    @objc private func textFieldChanged() {
+        if placeName.text?.isEmpty == true {
+            saveButton.isEnabled = false
+        } else {
+            saveButton.isEnabled = true
+        }
     }
     
 }
@@ -90,9 +130,13 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
     //позволяет использовать отредактированное пользователем изображение
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         //здесь присваиваем аутлету imageOfPlace изображение которое выбирает пользователь
-        imageOfPlace.image = info[.editedImage] as? UIImage//мы должны взять значение по конкретному ключу словаря info, ключами данного словаря являются свойства той самой структуры UIImagePickerController.InfoKey, свойства данной структуры определяют тип контента, и значения этих свойств мы будем присваивать нашему аутлету imageOfPlace. Взяли значение по ключу editedImage - info[.editedImage] и присвоили это значение как UIImage свойству imageOfPlace
-        imageOfPlace.contentMode = .scaleAspectFill
-        imageOfPlace.clipsToBounds = true
+        placeImage.image = info[.editedImage] as? UIImage//мы должны взять значение по конкретному ключу словаря info, ключами данного словаря являются свойства той самой структуры UIImagePickerController.InfoKey, свойства данной структуры определяют тип контента, и значения этих свойств мы будем присваивать нашему аутлету imageOfPlace. Взяли значение по ключу editedImage - info[.editedImage] и присвоили это значение как UIImage свойству imageOfPlace
+        placeImage.contentMode = .scaleAspectFill
+        placeImage.clipsToBounds = true
+        
+        //если значение imageIsChanged = true то мы не будем менять фоновую картинку, в противном случае меняем
+        imageIsChanged = true
+        
         //определившись с изображением и настроив его формат нам необъодимо закрыть imagePickerController
         dismiss(animated: true, completion: nil)
         //метод реализован и теперь надо определить кто будет делегировать обязанности по выполнению данного метода и кто будет выполнять данный метод (делегат), делегировать (передавать) выполнение данного метода должен объект с типом UIImagePickerController (определили в chooseImagePicker, объект imagePicker)
