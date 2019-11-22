@@ -9,8 +9,6 @@
 import UIKit
 
 class MainViewController: UITableViewController {
-
-
     
     let places = Place.getPlaces()
     
