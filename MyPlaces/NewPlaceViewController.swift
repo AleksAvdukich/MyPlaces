@@ -9,7 +9,9 @@
 import UIKit
 
 class NewPlaceViewController: UITableViewController {
-
+    //объект в который мы будем передавать выбранную запись
+    var currentPlace: Place?
+    
     var imageIsChanged = false
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -32,6 +34,8 @@ class NewPlaceViewController: UITableViewController {
         saveButton.isEnabled = false
 
         placeName.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+        
+        setupEditScreen()
     }
     
     //MARK: Table View delegate
@@ -74,7 +78,7 @@ class NewPlaceViewController: UITableViewController {
         }
     }
     //будем передавать значения заполненных полей в соответствующие свойства нашей модели
-    func saveNewPlace() {
+    func savePlace() {
         
         var image: UIImage?
         //если изображение было изменено пользователем
@@ -91,7 +95,45 @@ class NewPlaceViewController: UITableViewController {
                              type: placeType.text,
                              imageData: imageData)
         
-        StorageManager.saveObject(newPlace) //сохраняем в базу
+        if currentPlace != nil {
+            //меняем текущее значение currentPlace на новое
+            try! realm.write {
+                currentPlace?.name = newPlace.name
+                currentPlace?.location = newPlace.location
+                currentPlace?.type = newPlace.type
+                currentPlace?.imageData = newPlace.imageData
+            }
+        } else {
+            StorageManager.saveObject(newPlace) //сохраняем в базу
+        }
+    }
+    //приватный метод в котором будем работать над экраном редактирования записи
+    private func setupEditScreen() {
+        //все что мы будем выполнять в данном методе должно быть применено только в случае редактирования записи, это можно определить по наличию или отсутствию объекта currentPlace, данный объект имеет опциональный тип, при добавлении новой записи мы в него ничего не передаем и соотв. currentPlace остается инициализированным значением nil
+        if currentPlace != nil {
+            
+            setupNavigationBar()
+            imageIsChanged = true
+            
+            guard let data = currentPlace?.imageData, let image = UIImage(data: data) else { return }
+            
+            placeImage.image = image
+            placeImage.contentMode = .scaleAspectFill //позволяет масштабировать изображение по содержимому imageView
+            placeName.text = currentPlace?.name
+            placeLocation.text = currentPlace?.location
+            placeType.text = currentPlace?.type
+        }
+    }
+    
+    private func setupNavigationBar() {
+        //убираем MyPlaces из VC
+        if let topItem = navigationController?.navigationBar.topItem {
+            //backBarButtonItem - кнопка возврата
+            topItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        }
+        navigationItem.leftBarButtonItem = nil
+        title = currentPlace?.name
+        saveButton.isEnabled = true
     }
     
     @IBAction func cancelAction(_ sender: Any) {
@@ -100,7 +142,6 @@ class NewPlaceViewController: UITableViewController {
     
     
 }
-
 
 //MARK:- Text Field Delegate
 

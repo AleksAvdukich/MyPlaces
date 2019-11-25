@@ -54,22 +54,41 @@ class MainViewController: UITableViewController {
     }
  
     // MARK: - Table View delegate
-
+    //метод позволяющий вызывать различные пункты меню свайпом по ячейке справа налево
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let place = places[indexPath.row]
+        
+        let deleteAction = UITableViewRowAction(style: .default, title: "Delete") { (_, _) in
+            StorageManager.deleteObject(place)
+            //удаление объекта из базы не удаляет саму строку, поэтому надо вызвать следующий метод
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+        
+        return [deleteAction]
+    }
+    
     
     // MARK: - Navigation
     
-    /*
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "showDetail" {
+            //то передаем на newPlaceViewController выбранную запись
+            //нам необходимо извлечь конкретный объект находящийся в ячейке из массива places, в массиве он хранится по тому же индексу который соответствует индексу текущей ячейки
+            //необходимо определить индекс выбранной ячейки, за это отвечает св-во tableView - indexPathForSelectedRow к-ое возвращает опциональное значение
+            guard let indexPath = tableView.indexPathForSelectedRow else { return }
+            //имея индекс текущей строки мы можем извлечь объект из массива places по этому индексу
+            let place = places[indexPath.row]
+            let newPlaceVC = segue.destination as! NewPlaceViewController
+            newPlaceVC.currentPlace = place
+            //тем самым передали объект из выбранной ячейки на NewPlaceViewController
+        }
     }
-    */
     
     @IBAction func unwindSegue(_ segue: UIStoryboardSegue) {
         guard let newPlaceVC = segue.source as? NewPlaceViewController else { return }
         
-        newPlaceVC.saveNewPlace() //вызов данного метода произойдет прежде чем мы закроем ViewController
+        newPlaceVC.savePlace() //вызов данного метода произойдет прежде чем мы закроем ViewController
         tableView.reloadData()
     }
 
