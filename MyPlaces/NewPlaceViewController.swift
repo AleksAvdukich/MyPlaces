@@ -10,7 +10,6 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
 
-    var newPlace = Place() //присвоим сам объект модели, тем самым инициализировав его свойства значениями по умолчанию
     var imageIsChanged = false
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -23,15 +22,15 @@ class NewPlaceViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //при выполнении непосредственно записи в базу данных поток в котором выполняется данное действие полностью замораживается на время транзакции, те если запись в БД предполагает хоть какую-то задержку по времени то лучше это делать в фоновом потоке
-        DispatchQueue.main.async {
-            self.newPlace.savePlaces()
-            //чтение данных из базы не блокирует основной поток и можно обращаться к данным прямо во время записи из любого потока, те можно получать доступ к объекту сразу как он появляется в базе без обновления интерфейса
-        }
-        
+//        DispatchQueue.main.async {
+//            self.newPlace.savePlaces()
+//            //чтение данных из базы не блокирует основной поток и можно обращаться к данным прямо во время записи из любого потока, те можно получать доступ к объекту сразу как он появляется в базе без обновления интерфейса
+//        }
+    
         tableView.tableFooterView = UIView() //убираем разлиновку ячеек в нижней части tableView, там где нет контента
         
         saveButton.isEnabled = false
-        
+
         placeName.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
     }
     
@@ -85,11 +84,14 @@ class NewPlaceViewController: UITableViewController {
             image = #imageLiteral(resourceName: "imagePlaceholder")
         }
         
-//        newPlace = Place(name: placeName.text!,
-//                         location: placeLocation.text,
-//                         image: image,
-//                         type: placeType.text,
-//                         restaurantImage: nil)
+        let imageData = image?.pngData() //конвертация UIImage в Data
+        
+        let newPlace = Place(name: placeName.text!,
+                             location: placeLocation.text,
+                             type: placeType.text,
+                             imageData: imageData)
+        
+        StorageManager.saveObject(newPlace) //сохраняем в базу
     }
     
     @IBAction func cancelAction(_ sender: Any) {
@@ -148,3 +150,5 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
         //метод реализован и теперь надо определить кто будет делегировать обязанности по выполнению данного метода и кто будет выполнять данный метод (делегат), делегировать (передавать) выполнение данного метода должен объект с типом UIImagePickerController (определили в chooseImagePicker, объект imagePicker)
     }
 }
+
+
