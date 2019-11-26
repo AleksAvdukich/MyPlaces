@@ -15,6 +15,7 @@ class Place: Object {
     @objc dynamic var location: String?
     @objc dynamic var imageData: Data?
     @objc dynamic var type: String?
+    @objc dynamic var date = Date() //для внутреннего использования и пользователю оно дотупно не будет, мы всегда будем инициализировать его текущей датой и использовать это значение для сортировки по дате добавления
     
     //назначенный инициализатор который предназначен для того чтобы полностью инициализировать все св-ва представленные классом
     convenience init(name: String, location: String?, type: String?, imageData: Data?) {

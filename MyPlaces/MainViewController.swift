@@ -9,12 +9,18 @@
 import UIKit
 import RealmSwift
 
-class MainViewController: UITableViewController {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var reversedSortingButton: UIBarButtonItem!
     
     var places: Results<Place>! //Results аналог массива
     //нам надо выполнить запрос к базе чтобы отобразить в интерфейсе хранящиеся в ней записи
     //нужно создать объект типа Results (тип библиотеки Realm)
     //Results - автообновляемый тип контейнера который возвращает запрашиваемые объекты, результаты всегда отображают текущее состояние хранилища в текущем потоке, в том числе и во время записи транзакций, те объект Results позволяет работать с данными в реальном времени, мы моем одновременно записывать в него данные и тут же их считывать
+    var ascendingSorting = true //сортировка по возрастанию
+    //при нажатии на кнопку сортировки в обратном порядке мы должны будем поменять значение св-ва ascendingSorting на противоположное
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,13 +37,13 @@ class MainViewController: UITableViewController {
 //        return 0 //данный метод итак возвращает 1, поэтому мы можем просто удалить этот метод и tableView будет по умолчанию иметь 1 секцию
 //    }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //places мб пустым, пользователь может удалить все записи или при первом запуске приложения поле будет пустым
         return places.isEmpty ? 0 : places.count //если массив пустой возвращаем 0, а иначе количество элементов данной коллекции
     }
     
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
 
         let place = places[indexPath.row]
@@ -55,7 +61,7 @@ class MainViewController: UITableViewController {
  
     // MARK: - Table View delegate
     //метод позволяющий вызывать различные пункты меню свайпом по ячейке справа налево
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let place = places[indexPath.row]
         
         let deleteAction = UITableViewRowAction(style: .default, title: "Delete") { (_, _) in
@@ -91,7 +97,35 @@ class MainViewController: UITableViewController {
         newPlaceVC.savePlace() //вызов данного метода произойдет прежде чем мы закроем ViewController
         tableView.reloadData()
     }
-
+    
+    @IBAction func sortSelection(_ sender: UISegmentedControl) {
+        
+        sorting()
+        
+    }
+    
+    @IBAction func reversedSorting(_ sender: Any) {
+        ascendingSorting.toggle() //меняет значение на противоположное
+        
+        if ascendingSorting {
+            reversedSortingButton.image = #imageLiteral(resourceName: "AZ")
+        } else {
+            reversedSortingButton.image = #imageLiteral(resourceName: "ZA")
+        }
+        
+        sorting()
+    }
+    
+    private func sorting() {
+        
+        if segmentedControl.selectedSegmentIndex == 0 {
+            places = places.sorted(byKeyPath: "date", ascending: ascendingSorting)
+        } else {
+            places = places.sorted(byKeyPath: "name", ascending: ascendingSorting)
+        }
+        
+        tableView.reloadData()
+    }
 }
 
 //будем сохранять в базу а в MainViewController будем отображать обращаясь к базе
