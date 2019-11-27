@@ -85,6 +85,11 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
  
     // MARK: - Table View delegate
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true) //снимаем выделение ячейки (припереходе с NewPlaceViewController обратно на MainViewController оставалось выделение)
+    }
+    
     //метод позволяющий вызывать различные пункты меню свайпом по ячейке справа налево
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let place = places[indexPath.row]

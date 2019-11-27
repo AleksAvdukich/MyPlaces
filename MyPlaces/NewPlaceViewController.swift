@@ -29,7 +29,10 @@ class NewPlaceViewController: UITableViewController {
 //            //чтение данных из базы не блокирует основной поток и можно обращаться к данным прямо во время записи из любого потока, те можно получать доступ к объекту сразу как он появляется в базе без обновления интерфейса
 //        }
     
-        tableView.tableFooterView = UIView() //убираем разлиновку ячеек в нижней части tableView, там где нет контента
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0,
+                                                         y: 0,
+                                                         width: tableView.frame.size.width,
+                                                         height: 1)) //убираем разлиновку ячеек в нижней части tableView, там где нет контента
         
         saveButton.isEnabled = false
 
