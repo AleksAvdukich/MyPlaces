@@ -59,27 +59,19 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             return filteredPlaces.count
         }
         //places мб пустым, пользователь может удалить все записи или при первом запуске приложения поле будет пустым
-        return places.isEmpty ? 0 : places.count //если массив пустой возвращаем 0, а иначе количество элементов данной коллекции
+        return places.count //если массив пустой возвращаем 0, а иначе количество элементов данной коллекции
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
-
-        var place = Place()
         
-        if isFiltering {
-            place = filteredPlaces[indexPath.row]
-        } else {
-            place = places[indexPath.row]
-        }
+        let place = isFiltering ? filteredPlaces[indexPath.row] : places[indexPath.row]
 
         cell.nameLabel?.text = place.name
         cell.locationLabel.text = place.location
         cell.typeLabel.text = place.type
         cell.imageOfPlace.image = UIImage(data: place.imageData!)
-
-        cell.imageOfPlace?.layer.cornerRadius = cell.imageOfPlace.frame.size.height / 2 //imageView - квадрат, чтобы из него сделать кргу необходимо задать угол радиуса равный половине квадрата, тк высота изображения равна высоте строки, то для cornerRadius присваиваем половину высоты строки
-        cell.imageOfPlace?.clipsToBounds = true //для того чтобы изображение стало круглым необходимо обрезать его по границам imageView
+        cell.cosmosView.rating = place.rating
 
         return cell
     }
@@ -114,12 +106,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //необходимо определить индекс выбранной ячейки, за это отвечает св-во tableView - indexPathForSelectedRow к-ое возвращает опциональное значение
             guard let indexPath = tableView.indexPathForSelectedRow else { return }
             //имея индекс текущей строки мы можем извлечь объект из массива places по этому индексу
-            let place: Place
-            if isFiltering {
-                place = filteredPlaces[indexPath.row]
-            } else {
-                place = places[indexPath.row]
-            }
+            let place = isFiltering ? filteredPlaces[indexPath.row] : places[indexPath.row]
+            
             let newPlaceVC = segue.destination as! NewPlaceViewController
             newPlaceVC.currentPlace = place
             //тем самым передали объект из выбранной ячейки на NewPlaceViewController
