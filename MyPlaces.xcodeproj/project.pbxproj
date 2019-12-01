@@ -17,6 +17,7 @@
 		1F6D40142386DCD3004D57AD /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D40132386DCD3004D57AD /* PlaceModel.swift */; };
 		1F6D401623875814004D57AD /* NewPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D401523875814004D57AD /* NewPlaceViewController.swift */; };
 		1F6D4018238B4A6E004D57AD /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D4017238B4A6E004D57AD /* StorageManager.swift */; };
+		1F9AC8812393328200E0B1FB /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9AC8802393328200E0B1FB /* MapViewController.swift */; };
 		2A439B5211D8B16F78B16EB0 /* Pods_MyPlaces.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4566F355C005F6BD8BB87246 /* Pods_MyPlaces.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		1F6D40132386DCD3004D57AD /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
 		1F6D401523875814004D57AD /* NewPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaceViewController.swift; sourceTree = "<group>"; };
 		1F6D4017238B4A6E004D57AD /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		1F9AC8802393328200E0B1FB /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		333163BD5BCAE5C8D6AF6CF8 /* Pods-MyPlaces.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyPlaces.debug.xcconfig"; path = "Target Support Files/Pods-MyPlaces/Pods-MyPlaces.debug.xcconfig"; sourceTree = "<group>"; };
 		4566F355C005F6BD8BB87246 /* Pods_MyPlaces.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MyPlaces.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		603E9F9826B2062EFFEAAA3F /* Pods-MyPlaces.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyPlaces.release.xcconfig"; path = "Target Support Files/Pods-MyPlaces/Pods-MyPlaces.release.xcconfig"; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				1F26A1D9238EE07700669451 /* RatingControl.swift */,
 				1F6D401523875814004D57AD /* NewPlaceViewController.swift */,
 				1F6D4017238B4A6E004D57AD /* StorageManager.swift */,
+				1F9AC8802393328200E0B1FB /* MapViewController.swift */,
 				1F447EA72383589A00946AB9 /* Main.storyboard */,
 				1F447EAA2383589C00946AB9 /* Assets.xcassets */,
 				1F447EAC2383589C00946AB9 /* LaunchScreen.storyboard */,
@@ -225,6 +228,7 @@
 				1F6D4018238B4A6E004D57AD /* StorageManager.swift in Sources */,
 				1F447EA42383589A00946AB9 /* AppDelegate.swift in Sources */,
 				1F447EB623835FDC00946AB9 /* MainViewController.swift in Sources */,
+				1F9AC8812393328200E0B1FB /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
