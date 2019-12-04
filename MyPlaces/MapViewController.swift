@@ -15,20 +15,43 @@ class MapViewController: UIViewController {
     var place = Place() //здесь мы можем позволить себе принудительное извлечение тк данное св-во будет инициализировано значениями заведения которое мы будем передавать при переходе на этот VC
     let annotationIdentifier = "annotationIdentifier"
     let locationManager = CLLocationManager()
+    let regionInMeters = 10_000.00
+    var incomeSegueIdentifier = ""
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var mapPinImage: UIImageView!
+    @IBOutlet weak var addressLabel: UILabel!
+    @IBOutlet weak var doneButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        addressLabel.text = ""
+        
         mapView.delegate = self //назначили делегатом сам класс
-        setupPlacemark()
+        setupMapView()
         checkLocationServices()
         
     }
     
+    @IBAction func centerViewInUserLocation() {
+        showUserLocation()
+    }
+    
+    @IBAction func doneButtonPressed() {
+    }
+    
     @IBAction func closeVC() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    private func setupMapView() {
+        if incomeSegueIdentifier == "showPlace" {
+            setupPlacemark()
+            mapPinImage.isHidden = true
+            addressLabel.isHidden = true
+            doneButton.isHidden = true
+        }
     }
     
     //поработаем над маркером который будет указывать местоположение на карте
@@ -72,7 +95,11 @@ class MapViewController: UIViewController {
             setupLocationManager()
             checkLocationAuthorization()
         } else {
-            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.showAlert(title: "Location Services are Disabled",
+                          message: "To enable it go: Settings -> Privacy -> Location Services and turn On"
+                )
+            }
         }
     }
     //если службы геолокации доступны то из if вызываем
@@ -87,9 +114,14 @@ class MapViewController: UIViewController {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedWhenInUse: //данный статус возвращается когда приложению разрешено определять геолокацию в момент его использования. Приполучении данного статуса будем отображать на карте локацию пользователя
             mapView.showsUserLocation = true
+            if incomeSegueIdentifier == "getAddress" { showUserLocation() }
             break
-        case .denied: //данный статус получаем когда приложению запрещено использовать службы геолокации, также если сулжбе геолокации отключены в настройках, в этом случае необходимо сообщить пользователю и объяснить как авторизовать приложение
-            //Show Alert Controller
+        case .denied: //данный статус получаем когда приложению запрещено использовать службы геолокации, также если службы геолокации отключены в настройках, в этом случае необходимо сообщить пользователю и объяснить как авторизовать приложение
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.showAlert(title: "Your Location is not Available",
+                               message: "To give permission Go to: Settings -> MyPlaces -> Location"
+                )
+            }
             break
         case .notDetermined: //статус неопределен. Возвращается если пользователь еще не сделал выбор относительно того может ли это приложение использовать службы геолокации
             locationManager.requestWhenInUseAuthorization()
@@ -102,6 +134,34 @@ class MapViewController: UIViewController {
             print("New case is available")
         }
     }
+    
+    private func showUserLocation() {
+        //если нам получается определить координаты пользователя, то определяем регион для позиционирования карты
+        if let location = locationManager.location?.coordinate {
+            let region = MKCoordinateRegion(center: location,
+                                            latitudinalMeters: regionInMeters,
+                                            longitudinalMeters: regionInMeters)
+            mapView.setRegion(region, animated: true)
+        }
+    }
+    //возвращает текущие координаты точки находящиеся по центру экрана
+    private func getCenterLocation(for mapView: MKMapView) -> CLLocation {
+        
+        let latitude = mapView.centerCoordinate.latitude
+        let longitude = mapView.centerCoordinate.longitude
+        
+        return CLLocation(latitude: latitude, longitude: longitude)
+    }
+    
+    private func showAlert(title: String, message: String) {
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
 }
 
 extension MapViewController: MKMapViewDelegate {
@@ -129,6 +189,36 @@ extension MapViewController: MKMapViewDelegate {
         }
         
         return annotationView
+    }
+    //будет вызываться каждый раз при смене отображаемого региона. И каждый раз при вызове данного метода будем тотбражать адрес который находится в центре текущего региона
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        
+        let center = getCenterLocation(for: mapView)
+        let geocoder = CLGeocoder() //отвечает за преобразование географических координат и географических названий
+        //координаты преобразовываем в адрес
+        geocoder.reverseGeocodeLocation(center) { (placemarks, error) in
+            
+            if let error = error {
+                print(error)
+                return
+            }
+            //если ошибки нет то нам нужно извлечь массив меток
+            guard let placemarks = placemarks else { return }
+            
+            let placemark = placemarks.first
+            let streetName = placemark?.thoroughfare // номер улицы
+            let buildNumber = placemark?.subThoroughfare //номер дома
+            
+            DispatchQueue.main.async {
+                if streetName != nil && buildNumber != nil {
+                    self.addressLabel.text = "\(streetName), \(buildNumber)"
+                } else if streetName != nil {
+                    self.addressLabel.text = "\(streetName)"
+                } else {
+                    self.addressLabel.text = ""
+                }
+            }
+        }
     }
 }
 
