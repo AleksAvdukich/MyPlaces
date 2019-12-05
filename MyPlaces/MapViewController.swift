@@ -10,18 +10,26 @@ import UIKit
 import MapKit
 import CoreLocation
 
+protocol MapViewControllerDelegate {
+    func getAddress(_ address: String?) //@objc optional означает метод не обязательный для реализации. Или второй вариант объевить расширение для данного протокола и тогда все методы будут не обязательными для выполнения
+}
+
 class MapViewController: UIViewController {
+    
+    var mapViewControllerDelegate: MapViewControllerDelegate?
     
     var place = Place() //здесь мы можем позволить себе принудительное извлечение тк данное св-во будет инициализировано значениями заведения которое мы будем передавать при переходе на этот VC
     let annotationIdentifier = "annotationIdentifier"
     let locationManager = CLLocationManager()
     let regionInMeters = 10_000.00
     var incomeSegueIdentifier = ""
+    var placeCoordinate: CLLocationCoordinate2D? //принимает координаты заведения
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var mapPinImage: UIImageView!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var doneButton: UIButton!
+    @IBOutlet weak var goButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +47,13 @@ class MapViewController: UIViewController {
     }
     
     @IBAction func doneButtonPressed() {
+        //при нажатии на Done мы будем передавать в параметры метода getAddress текущее значени адреса и затем закрывать VC
+        mapViewControllerDelegate?.getAddress(addressLabel.text)
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func goButtonPressed() {
+        getDirections()
     }
     
     @IBAction func closeVC() {
@@ -46,11 +61,15 @@ class MapViewController: UIViewController {
     }
     
     private func setupMapView() {
+        
+        goButton.isHidden = true
+        
         if incomeSegueIdentifier == "showPlace" {
             setupPlacemark()
             mapPinImage.isHidden = true
             addressLabel.isHidden = true
             doneButton.isHidden = true
+            goButton.isHidden = false
         }
     }
     
@@ -81,6 +100,7 @@ class MapViewController: UIViewController {
             guard let placemarkLocation = placemark?.location else { return }
             
             annotation.coordinate = placemarkLocation.coordinate
+            self.placeCoordinate = placemarkLocation.coordinate
             
             //Далее нужно задать видимую область карты таким образом чтобы на ней были видны все созданные аннотации
             self.mapView.showAnnotations([annotation], animated: true)
@@ -144,6 +164,65 @@ class MapViewController: UIViewController {
             mapView.setRegion(region, animated: true)
         }
     }
+    
+    private func getDirections() {
+        //определим координаты местоположения пользователя
+        guard let location = locationManager.location?.coordinate else {
+            //если не удается определить локацию то вызываем наш Алерт
+            showAlert(title: "Error", message: "Current location is not found")
+            return
+        }
+        //выполняем запрос на прокладку маршрута
+        guard let request = createDirectionRequest(from: location) else { showAlert(title: "Error", message: "Destination is not found")
+            return
+        }
+        //если все успешно то создаем маршрут на основе тех сведений которые у нас имеются в запросе
+        let directions = MKDirections(request: request)
+        //расчет маршрута
+        directions.calculate { (response, error) in
+            
+            if let error = error {
+                print(error)
+                return
+            }
+            
+            guard let response = response else {
+                self.showAlert(title: "Error", message: "Directions is not available")
+                return
+            }
+            //объект response содержит в себе массив routes с маршрутами
+            for route in response.routes {
+                //делаем перебор массива чтобы работать с каждым маршрутом в отдельности. Массив routes может содержать в себе один или несколько объектов MKRoute, каждый из которых представляет возможный набор направлений для пользователя. Если в настройках запроса на построение маршрута не запрашивать альтернативные маршруты, то этот массив будет содержать не более одного объекта. Каждый объект маршрута содержит сведения о геометрии которые можно использовать для отображения маршрута на карте, а также доп. информацию относящуюся к конкретному маршруту, такую как ожидаемое время в пути, дистанцию и все уведомления о поездке.
+                self.mapView.addOverlay(route.polyline)
+                self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+                
+                let distance = String(format: "%.1f", route.distance / 1000)
+                let timeInterval = route.expectedTravelTime
+                
+                print("Расстояние до места: \(distance) км.")
+                print("Время в пути составит: \(timeInterval) сек.")
+            }
+        }
+    }
+    
+    //настройка запроса на построение маршрута
+    private func createDirectionRequest(from coordinate: CLLocationCoordinate2D) -> MKDirections.Request? {
+        //запрос возвращаем опциональный тк все зависит от того сможем ли мы определить координаты места назначения
+        //местом назначения выступает заведение
+        guard let destinationCoordinate = placeCoordinate else { return nil } //просто взять и выйти из метода мы не можем тк нам надо вернуть объект MKDirections.Request?, тк он опциональный мы можем просто вернуть nil
+        //теперь надо определить метоположение точки для начала маршрута
+        let startingLocation = MKPlacemark(coordinate: coordinate)//точка на карте
+        let destination = MKPlacemark(coordinate: destinationCoordinate)//точка на карте
+        //имея координаты 2-х точек на карте мы можем создать запрос на построение маршрута из точки А в точку B
+        let request = MKDirections.Request() //данное св-во позволяет определить начальную и конечную точку маршрута, а также планируемый вид транспорта
+        request.source = MKMapItem(placemark: startingLocation)
+        request.destination = MKMapItem(placemark: destination)
+        request.transportType = .automobile
+        request.requestsAlternateRoutes = true //позволяет задать несколько маршрутов если есть альтернативные варианты
+        
+        return request
+    }
+    
     //возвращает текущие координаты точки находящиеся по центру экрана
     private func getCenterLocation(for mapView: MKMapView) -> CLLocation {
         
@@ -206,8 +285,8 @@ extension MapViewController: MKMapViewDelegate {
             guard let placemarks = placemarks else { return }
             
             let placemark = placemarks.first
-            let streetName = placemark?.thoroughfare // номер улицы
-            let buildNumber = placemark?.subThoroughfare //номер дома
+            guard let streetName = placemark?.thoroughfare else { return }// номер улицы
+            guard let buildNumber = placemark?.subThoroughfare else { return }//номер дома
             
             DispatchQueue.main.async {
                 if streetName != nil && buildNumber != nil {
@@ -219,6 +298,14 @@ extension MapViewController: MKMapViewDelegate {
                 }
             }
         }
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        //Хоть и создали наложения маршрута на карту оно у нас невидимое и для того чтобы его отобразить мы создадим лини по этому наложению
+        let renderer = MKPolylineRenderer(overlay: overlay as! MKPolyline)
+        renderer.strokeColor = .blue
+        
+        return renderer
     }
 }
 

@@ -92,9 +92,12 @@ class NewPlaceViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        guard let identifier = segue.identifier, let mapVC = segue.destination as? MapViewController else { return }
+        guard let identifier = segue.identifier,
+              let mapVC = segue.destination as? MapViewController
+              else { return }
         
         mapVC.incomeSegueIdentifier = identifier
+        mapVC.mapViewControllerDelegate = self
         
         if identifier == "showPlace" {
             mapVC.place.name = placeName.text!
@@ -218,4 +221,9 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
     }
 }
 
-
+extension NewPlaceViewController: MapViewControllerDelegate {
+    //пераметр метода address уже содержит значение выбранного адреса, все что нам надо сделать так это передать это значение в поле location
+    func getAddress(_ address: String?) {
+        placeLocation.text = address
+    }
+}
