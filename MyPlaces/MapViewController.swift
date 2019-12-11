@@ -21,9 +21,15 @@ class MapViewController: UIViewController {
     var place = Place() //здесь мы можем позволить себе принудительное извлечение тк данное св-во будет инициализировано значениями заведения которое мы будем передавать при переходе на этот VC
     let annotationIdentifier = "annotationIdentifier"
     let locationManager = CLLocationManager()
-    let regionInMeters = 10_000.00
+    let regionInMeters = 1000.00
     var incomeSegueIdentifier = ""
     var placeCoordinate: CLLocationCoordinate2D? //принимает координаты заведения
+    var directionsArray: [MKDirections] = [] //массив в котором мы будем хранить маршруты
+    var previousLocation: CLLocation? { //для хранения предыдущего местоположения пользователя
+        didSet {
+            startTrackingUserLocation()
+        }
+    }
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var mapPinImage: UIImageView!
@@ -59,7 +65,6 @@ class MapViewController: UIViewController {
     @IBAction func closeVC() {
         dismiss(animated: true, completion: nil)
     }
-    
     private func setupMapView() {
         
         goButton.isHidden = true
@@ -71,6 +76,17 @@ class MapViewController: UIViewController {
             doneButton.isHidden = true
             goButton.isHidden = false
         }
+    }
+    
+    //будем сбрасывать старые маршруты перед построением новых
+    private func resetMapView(withNew directions: MKDirections) {
+        //перед тем как построить маршрут удаляем с карты наложения текущего маршрута
+        mapView.removeOverlays(mapView.overlays)
+        directionsArray.append(directions)
+        //далее нужноперебрать все элементы массива directionsArray и отменить у каждого элемента из этого массива маршрут
+        let _ = directionsArray.map { $0.cancel() }
+        //удаляем все эл-ты из массива
+        directionsArray.removeAll()
     }
     
     //поработаем над маркером который будет указывать местоположение на карте
@@ -165,6 +181,19 @@ class MapViewController: UIViewController {
         }
     }
     
+    private func startTrackingUserLocation() {
+        
+        guard let previousLocation = previousLocation else { return }
+        let center = getCenterLocation(for: mapView)
+        guard center.distance(from: previousLocation) > 50 else { return }
+        //присваиваем предыдущие координаты пользователя текущим координатам центра
+        self.previousLocation = center
+        //показываем карту с текущем местоположением пользователя с небольшой задержкой, тк если сделать без задержки то карта сразу сфокусируется на текущем местоположении пользователя и мы не успеем увидеть весь марщрут от точки A до B
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.showUserLocation()
+        }
+    }
+    
     private func getDirections() {
         //определим координаты местоположения пользователя
         guard let location = locationManager.location?.coordinate else {
@@ -172,12 +201,18 @@ class MapViewController: UIViewController {
             showAlert(title: "Error", message: "Current location is not found")
             return
         }
+        //режим постоянного отслеживания текущего местоположения пользователя
+        locationManager.startUpdatingLocation()
+        previousLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        
         //выполняем запрос на прокладку маршрута
         guard let request = createDirectionRequest(from: location) else { showAlert(title: "Error", message: "Destination is not found")
             return
         }
         //если все успешно то создаем маршрут на основе тех сведений которые у нас имеются в запросе
         let directions = MKDirections(request: request)
+        resetMapView(withNew: directions)
+        
         //расчет маршрута
         directions.calculate { (response, error) in
             
@@ -275,6 +310,15 @@ extension MapViewController: MKMapViewDelegate {
         let center = getCenterLocation(for: mapView)
         let geocoder = CLGeocoder() //отвечает за преобразование географических координат и географических названий
         //координаты преобразовываем в адрес
+        
+        if incomeSegueIdentifier == "showPlace" && previousLocation != nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.showUserLocation()
+            }
+        }
+        //освобождение ресурсов связанных с геокодированием делаем отмену отложенного запроса. Те карта возвращается на местоположение пользователя при ее смещении
+        geocoder.cancelGeocode()
+        
         geocoder.reverseGeocodeLocation(center) { (placemarks, error) in
             
             if let error = error {
