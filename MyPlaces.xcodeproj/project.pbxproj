@@ -13,6 +13,7 @@
 		1F447EAB2383589C00946AB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F447EAA2383589C00946AB9 /* Assets.xcassets */; };
 		1F447EAE2383589C00946AB9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F447EAC2383589C00946AB9 /* LaunchScreen.storyboard */; };
 		1F447EB623835FDC00946AB9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F447EB523835FDC00946AB9 /* MainViewController.swift */; };
+		1F67959423A4391B0054C21B /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F67959323A4391B0054C21B /* MapManager.swift */; };
 		1F6D40122385F1EC004D57AD /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */; };
 		1F6D40142386DCD3004D57AD /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D40132386DCD3004D57AD /* PlaceModel.swift */; };
 		1F6D401623875814004D57AD /* NewPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D401523875814004D57AD /* NewPlaceViewController.swift */; };
@@ -30,6 +31,7 @@
 		1F447EAD2383589C00946AB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1F447EAF2383589C00946AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F447EB523835FDC00946AB9 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		1F67959323A4391B0054C21B /* MapManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapManager.swift; sourceTree = "<group>"; };
 		1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		1F6D40132386DCD3004D57AD /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
 		1F6D401523875814004D57AD /* NewPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaceViewController.swift; sourceTree = "<group>"; };
@@ -73,20 +75,61 @@
 		1F447EA22383589A00946AB9 /* MyPlaces */ = {
 			isa = PBXGroup;
 			children = (
-				1F447EA32383589A00946AB9 /* AppDelegate.swift */,
-				1F447EB523835FDC00946AB9 /* MainViewController.swift */,
-				1F6D40132386DCD3004D57AD /* PlaceModel.swift */,
-				1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */,
-				1F26A1D9238EE07700669451 /* RatingControl.swift */,
-				1F6D401523875814004D57AD /* NewPlaceViewController.swift */,
-				1F6D4017238B4A6E004D57AD /* StorageManager.swift */,
-				1F9AC8802393328200E0B1FB /* MapViewController.swift */,
-				1F447EA72383589A00946AB9 /* Main.storyboard */,
-				1F447EAA2383589C00946AB9 /* Assets.xcassets */,
-				1F447EAC2383589C00946AB9 /* LaunchScreen.storyboard */,
-				1F447EAF2383589C00946AB9 /* Info.plist */,
+				1F67958F23A438860054C21B /* ViewControllers */,
+				1F67959523A439540054C21B /* Helpers */,
+				1F67959223A438E70054C21B /* Models */,
+				1F67959623A439720054C21B /* Support Files */,
+				1F67959723A439A70054C21B /* IBuilder */,
 			);
 			path = MyPlaces;
+			sourceTree = "<group>";
+		};
+		1F67958F23A438860054C21B /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				1F447EB523835FDC00946AB9 /* MainViewController.swift */,
+				1F6D401523875814004D57AD /* NewPlaceViewController.swift */,
+				1F9AC8802393328200E0B1FB /* MapViewController.swift */,
+				1F6D40112385F1EC004D57AD /* CustomTableViewCell.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		1F67959223A438E70054C21B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1F6D40132386DCD3004D57AD /* PlaceModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1F67959523A439540054C21B /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				1F67959323A4391B0054C21B /* MapManager.swift */,
+				1F26A1D9238EE07700669451 /* RatingControl.swift */,
+				1F6D4017238B4A6E004D57AD /* StorageManager.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		1F67959623A439720054C21B /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				1F447EA32383589A00946AB9 /* AppDelegate.swift */,
+				1F447EAA2383589C00946AB9 /* Assets.xcassets */,
+				1F447EAF2383589C00946AB9 /* Info.plist */,
+			);
+			path = "Support Files";
+			sourceTree = "<group>";
+		};
+		1F67959723A439A70054C21B /* IBuilder */ = {
+			isa = PBXGroup;
+			children = (
+				1F447EA72383589A00946AB9 /* Main.storyboard */,
+				1F447EAC2383589C00946AB9 /* LaunchScreen.storyboard */,
+			);
+			path = IBuilder;
 			sourceTree = "<group>";
 		};
 		583F5C8B7D315C4720D4A316 /* Frameworks */ = {
@@ -227,6 +270,7 @@
 				1F6D401623875814004D57AD /* NewPlaceViewController.swift in Sources */,
 				1F6D4018238B4A6E004D57AD /* StorageManager.swift in Sources */,
 				1F447EA42383589A00946AB9 /* AppDelegate.swift in Sources */,
+				1F67959423A4391B0054C21B /* MapManager.swift in Sources */,
 				1F447EB623835FDC00946AB9 /* MainViewController.swift in Sources */,
 				1F9AC8812393328200E0B1FB /* MapViewController.swift in Sources */,
 			);
@@ -377,7 +421,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 36763Q3UE3;
-				INFOPLIST_FILE = MyPlaces/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/MyPlaces/Support Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -397,7 +441,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 36763Q3UE3;
-				INFOPLIST_FILE = MyPlaces/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/MyPlaces/Support Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
